@@ -1,4 +1,4 @@
-package com.example.mvvm_android_template.domain.model
+package com.example.mvvm_android_template.domain
 
 data class Product(
     val id: Int,

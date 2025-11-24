@@ -1,4 +1,4 @@
-package com.example.mvvm_android_template.presentation.product_details
+package com.example.mvvm_android_template.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,16 +25,17 @@ import androidx.compose.ui.unit.sp
 import com.example.mvvm_android_template.application.view_model.product_details.ProductDetailsViewModel
 
 import com.example.mvvm_android_template.domain.language.Language
-import com.example.mvvm_android_template.presentation.DirectionalScreen
-import com.example.mvvm_android_template.presentation.language.LanguageView
 
 @Composable
 fun ProductDetailsScreen(
     viewModel: ProductDetailsViewModel
 ) {
-    val product by viewModel.product.observeAsState()
+    val name by viewModel.name.observeAsState("")
+    val category by viewModel.category.observeAsState("")
+    val description by viewModel.description.observeAsState("")
     val selectedLanguage by viewModel.selectedLanguage.observeAsState(Language.TR)
     val isLtr by viewModel.isLtr.observeAsState(false)
+    val isLoading by viewModel.isLoading.observeAsState(true)
 
     DirectionalScreen(isLtr = isLtr) {
         Column(
@@ -43,18 +44,14 @@ fun ProductDetailsScreen(
                 .background(Color.Black)
                 .padding(16.dp)
         ) {
-            // language selector – view just forwards the event
             LanguageView(
                 selected = selectedLanguage,
                 isLtr = isLtr,
-                onLanguageSelected = { lang ->
-                    viewModel.onLanguageSelected(lang)
-                }
+                onLanguageSelected = { lang -> viewModel.onLanguageSelected(lang) }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Back – view just forwards click
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = if (isLtr) Arrangement.Start else Arrangement.End
@@ -72,40 +69,50 @@ fun ProductDetailsScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            if (product == null) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
+            when {
+                isLoading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Loading...", color = Color.Gray)
+                    }
+                }
+
+                name.isEmpty() -> { // product not found
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Product not found", color = Color.Gray)
+                    }
+                }
+
+                else -> {
                     Text(
-                        text = "Loading...",
-                        color = Color.Gray
+                        text = name,
+                        color = Color.White,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = category,
+                        color = Color(0xFFF60202),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = description,
+                        color = Color.White,
+                        style = MaterialTheme.typography.bodyLarge,
+                        lineHeight = 22.sp
                     )
                 }
-            } else {
-                Text(
-                    text = product!!.name,
-                    color = Color.White,
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = product!!.category,
-                    color = Color(0xFFB0B0B0),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text(
-                    text = product!!.description,
-                    color = Color.White,
-                    style = MaterialTheme.typography.bodyLarge,
-                    lineHeight = 22.sp
-                )
             }
         }
     }

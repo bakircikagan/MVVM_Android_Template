@@ -1,6 +1,7 @@
-package com.example.mvvm_android_template.domain.model
+package com.example.mvvm_android_template.domain
 
-import com.example.mvvm_android_template.domain.model.language.Language
+import com.example.mvvm_android_template.domain.language.Language
+import com.example.mvvm_android_template.domain.language.localizeTitle
 
 data class Products(
     val selectedLanguage: Language = Language.TR,
@@ -10,10 +11,3 @@ data class Products(
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )
-fun localizeTitle(language: Language): String =
-    when (language) {
-        Language.TR -> "Ürünler"
-        Language.EN -> "Products"
-        Language.AR -> "المنتجات"
-    }
-fun isLtrLanguage(language: Language): Boolean = language != Language.AR

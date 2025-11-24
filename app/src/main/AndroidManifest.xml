@@ -12,24 +12,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MVVM_Android_Template">
 
-        <!-- Artık LAUNCHER: ProductsActivity -->
+        <!-- LAUNCHER: MainActivity -->
         <activity
-            android:name=".presentation.products.ProductsActivity"
+            android:name=".presentation.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
+            android:label="MVVM_Android_Template"
             android:theme="@style/Theme.MVVM_Android_Template">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- Eski MainActivity, launcher değil artık -->
-        <activity
-            android:name=".presentation.MainActivity"
-            android:exported="false"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.MVVM_Android_Template" />
     </application>
 
 </manifest>

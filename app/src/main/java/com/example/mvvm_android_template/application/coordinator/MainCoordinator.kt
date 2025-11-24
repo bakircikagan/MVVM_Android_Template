@@ -1,4 +1,4 @@
-package com.example.mvvm_android_template.presentation.coordinator
+package com.example.mvvm_android_template.application.coordinator
 
 import androidx.navigation.NavHostController
 

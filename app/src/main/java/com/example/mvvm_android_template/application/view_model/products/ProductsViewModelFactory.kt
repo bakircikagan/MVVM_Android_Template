@@ -1,9 +1,9 @@
-package com.example.mvvm_android_template.presentation.products
+package com.example.mvvm_android_template.application.view_model.products
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.mvvm_android_template.data.FakeProductRepository
-import com.example.mvvm_android_template.domain.model.language.LanguageSubject
+import com.example.mvvm_android_template.infrastructure.FakeProductRepository
+import com.example.mvvm_android_template.domain.language.LanguageSubject
 import com.example.mvvm_android_template.application.coordinator.BaseCoordinator
 
 class ProductsViewModelFactory(
@@ -18,7 +18,7 @@ class ProductsViewModelFactory(
             return ProductsViewModel(
                 repository = repository,
                 languageSubject = languageSubject,
-                coordinator = coordinator          // 🔥 REQUIRED
+                coordinator = coordinator
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: $modelClass")

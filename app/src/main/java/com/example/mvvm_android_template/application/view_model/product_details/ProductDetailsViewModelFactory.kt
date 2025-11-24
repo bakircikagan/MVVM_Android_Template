@@ -1,9 +1,9 @@
-package com.example.mvvm_android_template.application.product_details
+package com.example.mvvm_android_template.application.view_model.product_details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.mvvm_android_template.data.FakeProductRepository
-import com.example.mvvm_android_template.domain.model.language.LanguageSubject
+import com.example.mvvm_android_template.infrastructure.FakeProductRepository
+import com.example.mvvm_android_template.domain.language.LanguageSubject
 import com.example.mvvm_android_template.application.coordinator.BaseCoordinator
 
 class ProductDetailsViewModelFactory(

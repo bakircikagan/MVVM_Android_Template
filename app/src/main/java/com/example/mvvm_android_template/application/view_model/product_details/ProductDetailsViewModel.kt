@@ -1,16 +1,15 @@
-package com.example.mvvm_android_template.application.product_details
+package com.example.mvvm_android_template.application.view_model.product_details
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mvvm_android_template.data.FakeProductRepository
-import com.example.mvvm_android_template.domain.model.Product
-import com.example.mvvm_android_template.domain.model.isLtrLanguage
-import com.example.mvvm_android_template.domain.model.language.Language
-import com.example.mvvm_android_template.domain.model.language.LanguageObserver
-import com.example.mvvm_android_template.domain.model.language.LanguageSubject
+import com.example.mvvm_android_template.infrastructure.FakeProductRepository
+import com.example.mvvm_android_template.domain.language.Language
+import com.example.mvvm_android_template.domain.language.LanguageObserver
+import com.example.mvvm_android_template.domain.language.LanguageSubject
 import com.example.mvvm_android_template.application.coordinator.BaseCoordinator
+import com.example.mvvm_android_template.domain.language.isLtrLanguage
 import kotlinx.coroutines.launch
 
 class ProductDetailsViewModel(
@@ -20,8 +19,18 @@ class ProductDetailsViewModel(
     private val coordinator: BaseCoordinator
 ) : ViewModel(), LanguageObserver {
 
-    private val _product = MutableLiveData<Product?>()
-    val product: LiveData<Product?> = _product
+    // View-facing state: primitives only
+    private val _name = MutableLiveData<String>()
+    val name: LiveData<String> = _name
+
+    private val _category = MutableLiveData<String>()
+    val category: LiveData<String> = _category
+
+    private val _description = MutableLiveData<String>()
+    val description: LiveData<String> = _description
+
+    private val _isLoading = MutableLiveData<Boolean>(true)
+    val isLoading: LiveData<Boolean> = _isLoading
 
     private val _selectedLanguage = MutableLiveData<Language>(languageSubject.currentLanguage)
     val selectedLanguage: LiveData<Language> = _selectedLanguage
@@ -46,9 +55,23 @@ class ProductDetailsViewModel(
     }
 
     private fun load(language: Language) {
+        _isLoading.value = true
+
         viewModelScope.launch {
             val products = repository.getProducts(language)
-            _product.value = products.firstOrNull { it.id == productId }
+            val product = products.firstOrNull { it.id == productId }
+
+            if (product != null) {
+                _name.value = product.name
+                _category.value = product.category
+                _description.value = product.description
+            } else {
+                _name.value = ""
+                _category.value = ""
+                _description.value = ""
+            }
+
+            _isLoading.value = false
         }
     }
 
@@ -58,6 +81,5 @@ class ProductDetailsViewModel(
 
     fun onLanguageSelected(language: Language) {
         languageSubject.setLanguage(language)
-        // onLanguageChanged will handle the rest
     }
 }

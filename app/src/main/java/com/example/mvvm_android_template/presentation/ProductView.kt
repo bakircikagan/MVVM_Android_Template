@@ -1,4 +1,4 @@
-package com.example.mvvm_android_template.presentation.product
+package com.example.mvvm_android_template.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,35 +15,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.mvvm_android_template.application.view_model.ProductRowViewModel
 import com.example.mvvm_android_template.domain.Product
 
 
 @Composable
 fun ProductView(
-    product: Product,
-    onClick: () -> Unit
+    viewModel: ProductRowViewModel
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .background(Color(0xFF171717))
-            .clickable { onClick() }
+            .clickable { viewModel.onClick() }
             .padding(horizontal = 16.dp, vertical = 14.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
 
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = product.name,
+                    text = viewModel.name,
                     color = Color.White,
                     style = MaterialTheme.typography.titleMedium
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = product.category,
+                    text = viewModel.category,
                     color = Color(0xFF9E9E9E),
                     style = MaterialTheme.typography.bodyMedium
                 )

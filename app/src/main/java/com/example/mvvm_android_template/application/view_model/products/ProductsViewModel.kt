@@ -1,4 +1,4 @@
-package com.example.mvvm_android_template.presentation.products
+package com.example.mvvm_android_template.application.view_model.products
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,14 +6,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.launch
 
-import com.example.mvvm_android_template.data.FakeProductRepository
-import com.example.mvvm_android_template.domain.model.Product
-import com.example.mvvm_android_template.domain.model.isLtrLanguage
-import com.example.mvvm_android_template.domain.model.language.Language
-import com.example.mvvm_android_template.domain.model.language.LanguageObserver
-import com.example.mvvm_android_template.domain.model.language.LanguageSubject
-import com.example.mvvm_android_template.domain.model.localizeTitle
+import com.example.mvvm_android_template.infrastructure.FakeProductRepository
+import com.example.mvvm_android_template.domain.Product
+import com.example.mvvm_android_template.domain.language.Language
+import com.example.mvvm_android_template.domain.language.LanguageObserver
+import com.example.mvvm_android_template.domain.language.LanguageSubject
 import com.example.mvvm_android_template.application.coordinator.BaseCoordinator
+import com.example.mvvm_android_template.application.view_model.ProductRowViewModel
+import com.example.mvvm_android_template.domain.language.isLtrLanguage
+import com.example.mvvm_android_template.domain.language.localizeTitle
 
 class ProductsViewModel(
     private val repository: FakeProductRepository,
@@ -39,6 +40,9 @@ class ProductsViewModel(
     private val _selectedLanguage = MutableLiveData<Language>(languageSubject.currentLanguage)
     val selectedLanguage: LiveData<Language> = _selectedLanguage
 
+    private val _items = MutableLiveData<List<ProductRowViewModel>>()
+    val items: LiveData<List<ProductRowViewModel>> = _items
+
     init {
         languageSubject.addObserver(this)
         loadProducts(languageSubject.currentLanguage)
@@ -57,25 +61,23 @@ class ProductsViewModel(
     }
 
     private fun loadProducts(language: Language) {
-        _isLoading.value = true
-        _errorMessage.value = null
-
         viewModelScope.launch {
-            try {
-                val list = repository.getProducts(language)
-                _products.value = list
-                _isLoading.value = false
-            } catch (e: Exception) {
-                _isLoading.value = false
-                _errorMessage.value = e.message ?: "Unknown error"
+            val list = repository.getProducts(language)
+            _items.value = list.map { p ->
+                ProductRowViewModel(
+                    id = p.id,
+                    name = p.name,
+                    category = p.category,
+                    onClick = { onProductClicked(p.id) }
+                )
             }
         }
     }
 
     // 🔹 UI events:
 
-    fun onProductClicked(product: Product) {
-        coordinator.navigateTo(product.id)
+    fun onProductClicked(productId: Int) {
+        coordinator.navigateTo(productId)
     }
 
     fun onLanguageSelected(language: Language) {

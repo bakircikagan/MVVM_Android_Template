@@ -1,7 +1,7 @@
-package com.example.mvvm_android_template.data
+package com.example.mvvm_android_template.infrastructure
 
-import com.example.mvvm_android_template.domain.model.language.Language
-import com.example.mvvm_android_template.domain.model.Product
+import com.example.mvvm_android_template.domain.language.Language
+import com.example.mvvm_android_template.domain.Product
 
 class FakeProductRepository : ProductRepository {
 

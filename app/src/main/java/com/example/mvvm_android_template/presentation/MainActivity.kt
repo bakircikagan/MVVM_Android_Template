@@ -1,4 +1,4 @@
-package com.example.mvvm_android_template.presentation.products
+package com.example.mvvm_android_template.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -20,37 +20,35 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 
-import com.example.mvvm_android_template.domain.model.Product
-import com.example.mvvm_android_template.domain.model.Products
-import com.example.mvvm_android_template.domain.model.language.Language
-import com.example.mvvm_android_template.domain.model.language.LanguageSubject
-import com.example.mvvm_android_template.domain.model.localizeTitle
-import com.example.mvvm_android_template.presentation.coordinator.BaseCoordinator
-import com.example.mvvm_android_template.presentation.coordinator.MainCoordinator
-import com.example.mvvm_android_template.presentation.language.LanguageViewModel
-import com.example.mvvm_android_template.presentation.product_details.ProductDetailsView
-import com.example.mvvm_android_template.presentation.product_details.ProductDetailsViewModel
-import com.example.mvvm_android_template.presentation.product_details.ProductDetailsViewModelFactory
+import com.example.mvvm_android_template.domain.Products
+import com.example.mvvm_android_template.domain.language.Language
+import com.example.mvvm_android_template.domain.language.LanguageSubject
+import com.example.mvvm_android_template.application.coordinator.BaseCoordinator
+import com.example.mvvm_android_template.application.coordinator.MainCoordinator
+import com.example.mvvm_android_template.application.view_model.LanguageViewModel
+import com.example.mvvm_android_template.application.view_model.product_details.ProductDetailsViewModel
+import com.example.mvvm_android_template.application.view_model.product_details.ProductDetailsViewModelFactory
+import com.example.mvvm_android_template.application.view_model.products.ProductsViewModel
+import com.example.mvvm_android_template.application.view_model.products.ProductsViewModelFactory
+import com.example.mvvm_android_template.domain.language.localizeTitle
 
-class ProductsActivity : ComponentActivity() {
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ProductsApp()
+            MainApp()
         }
     }
 }
 
 @Composable
-fun ProductsApp() {
+fun MainApp() {
     val navController = rememberNavController()
 
-    // Coordinator drives navigation, NOT the composables
     val coordinator = remember(navController) {
         MainCoordinator(navController)
     }
 
-    // Shared ViewModel across whole app
     val languageViewModel: LanguageViewModel = viewModel()
 
     MaterialTheme(colorScheme = darkColorScheme()) {
@@ -58,99 +56,42 @@ fun ProductsApp() {
             modifier = Modifier.fillMaxSize(),
             color = Color.Black
         ) {
-            // 🔥 THIS IS YOUR NAVHOST (THE ROOT OF YOUR NAVIGATION)
             NavHost(
                 navController = navController,
                 startDestination = "products"
             ) {
                 composable("products") {
                     val productsViewModel: ProductsViewModel = viewModel(
-                        factory = ProductsViewModelFactory(languageViewModel)
-                    )
-
-                    ProductsRoute(
-                        productsViewModel = productsViewModel,
-                        languageViewModel = languageViewModel,
-                        coordinator = coordinator
-                    )
-                }
-
-                composable(
-                    route = "productDetails/{productName}",
-                    arguments = listOf(
-                        navArgument("productName") { type = NavType.StringType }
-                    )
-                ) { backStackEntry ->
-
-                    val productName =
-                        backStackEntry.arguments?.getString("productName") ?: return@composable
-
-                    val detailsViewModel: ProductDetailsViewModel = viewModel(
-                        factory = ProductDetailsViewModelFactory(
+                        factory = ProductsViewModelFactory(
                             languageSubject = languageViewModel,
-                            productName = productName,
                             coordinator = coordinator
                         )
                     )
 
-                    ProductDetailsRoute(
-                        viewModel = detailsViewModel,
-                        languageSubject = languageViewModel
+                    // 🔹 Directly use screen composable
+                    ProductsScreen(viewModel = productsViewModel)
+                }
+
+                composable(
+                    route = "productDetails/{productId}",
+                    arguments = listOf(navArgument("productId") { type = NavType.IntType })
+                ) { backStackEntry ->
+
+                    val productId =
+                        backStackEntry.arguments?.getInt("productId") ?: return@composable
+
+                    val detailsViewModel: ProductDetailsViewModel = viewModel(
+                        factory = ProductDetailsViewModelFactory(
+                            languageSubject = languageViewModel,
+                            productId = productId,
+                            coordinator = coordinator
+                        )
                     )
+
+                    // 🔹 Directly use screen composable
+                    ProductDetailsScreen(viewModel = detailsViewModel)
                 }
             }
         }
     }
-}
-
-
-
-@Composable
-fun ProductsRoute(
-    productsViewModel: ProductsViewModel,
-    languageViewModel: LanguageViewModel,
-    coordinator: BaseCoordinator
-) {
-    val products by productsViewModel.products.observeAsState(emptyList())
-    val title by productsViewModel.title.observeAsState(localizeTitle(Language.TR))
-    val isLtr by productsViewModel.isLtr.observeAsState(false)
-    val isLoading by productsViewModel.isLoading.observeAsState(false)
-    val errorMessage by productsViewModel.errorMessage.observeAsState()
-    val selectedLanguage by productsViewModel.selectedLanguage.observeAsState(Language.TR)
-
-    val state = Products(
-        selectedLanguage = selectedLanguage,
-        title = title,
-        isLtr = isLtr,
-        products = products,
-        isLoading = isLoading,
-        errorMessage = errorMessage
-    )
-
-    ProductsView(
-        state = state,
-        languageViewModel = languageViewModel,
-        onProductClick = { product ->
-            coordinator.navigateTo(product.name)
-        }
-    )
-}
-
-
-@Composable
-fun ProductDetailsRoute(
-    viewModel: ProductDetailsViewModel,
-    languageSubject: LanguageSubject
-) {
-    val product by viewModel.product.observeAsState()
-    val selectedLanguage by viewModel.selectedLanguage.observeAsState(Language.TR)
-    val isLtr by viewModel.isLtr.observeAsState(false)
-
-    ProductDetailsView(
-        product = product,
-        selectedLanguage = selectedLanguage,
-        isLtr = isLtr,
-        viewModel = viewModel,
-        languageSubject = languageSubject
-    )
 }

@@ -1,4 +1,4 @@
-package com.example.mvvm_android_template.presentation.language
+package com.example.mvvm_android_template.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

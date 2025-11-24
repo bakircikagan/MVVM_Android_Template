@@ -1,4 +1,4 @@
-package com.example.mvvm_android_template.presentation.products
+package com.example.mvvm_android_template.presentation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,19 +18,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.mvvm_android_template.application.view_model.products.ProductsViewModel
 
+import com.example.mvvm_android_template.application.view_model.products.ProductsViewModel
 import com.example.mvvm_android_template.domain.language.Language
 import com.example.mvvm_android_template.domain.language.localizeTitle
-import com.example.mvvm_android_template.presentation.language.LanguageView
-import com.example.mvvm_android_template.presentation.product.ProductView
-import com.example.mvvm_android_template.presentation.DirectionalScreen
 
 @Composable
 fun ProductsScreen(
     viewModel: ProductsViewModel
 ) {
-    val products by viewModel.products.observeAsState(emptyList())
+    // 🔹 bind to row view-models, not domain Product
+    val rows by viewModel.items.observeAsState(emptyList())
     val title by viewModel.title.observeAsState(localizeTitle(Language.TR))
     val isLtr by viewModel.isLtr.observeAsState(false)
     val isLoading by viewModel.isLoading.observeAsState(false)
@@ -68,6 +66,7 @@ fun ProductsScreen(
                         contentAlignment = Alignment.Center
                     ) { CircularProgressIndicator() }
                 }
+
                 errorMessage != null -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -76,13 +75,15 @@ fun ProductsScreen(
                         Text(text = errorMessage ?: "", color = Color.Red)
                     }
                 }
+
                 else -> {
                     LazyColumn {
-                        items(products) { product ->
-                            ProductView(
-                                product = product,
-                                onClick = { viewModel.onProductClicked(product) }
-                            )
+                        items(
+                            count = rows.size,
+                            key = { index -> rows[index].id }
+                        ) { index ->
+                            val rowVm = rows[index]
+                            ProductView(viewModel = rowVm)
                         }
                     }
                 }

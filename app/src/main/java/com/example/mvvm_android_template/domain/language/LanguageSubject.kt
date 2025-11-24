@@ -1,4 +1,4 @@
-package com.example.mvvm_android_template.domain.model.language
+package com.example.mvvm_android_template.domain.language
 
 
 interface LanguageSubject {
