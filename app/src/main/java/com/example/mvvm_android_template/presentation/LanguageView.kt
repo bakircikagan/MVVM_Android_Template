@@ -1,4 +1,4 @@
-package com.example.mvvm_android_template.presentation.products
+package com.example.mvvm_android_template.presentation.language
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,12 +13,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.mvvm_android_template.domain.model.language.Language
+import com.example.mvvm_android_template.domain.language.Language
+
 @Composable
-fun LanguageSegmentedControl(
+fun LanguageView(
     selected: Language,
     isLtr: Boolean,
-    onLanguageChange: (Language) -> Unit
+    onLanguageSelected: (Language) -> Unit
 ) {
     val options = if (isLtr) {
         listOf(Language.TR, Language.EN, Language.AR)
@@ -49,15 +50,12 @@ fun LanguageSegmentedControl(
                     .fillMaxHeight()
                     .padding(2.dp)
                     .clip(RoundedCornerShape(999.dp))
-                    .background(
-                        if (isSelected) Color(0xFF3A3A3A) else Color.Transparent
-                    )
-                    .clickable { onLanguageChange(language) },
+                    .background(if (isSelected) Color(0xFF3A3A3A) else Color.Transparent)
+                    .clickable { onLanguageSelected(language) },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = labels[language] ?: "",
-                    // center is fine for both LTR and RTL
                     style = MaterialTheme.typography.bodyMedium,
                     color = if (isSelected) Color.White else Color(0xFFB0B0B0),
                     fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
@@ -66,3 +64,4 @@ fun LanguageSegmentedControl(
         }
     }
 }
+

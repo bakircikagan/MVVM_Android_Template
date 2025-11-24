@@ -1,9 +1,8 @@
-package com.example.mvvm_android_template.presentation.products
+package com.example.mvvm_android_template.domain.model
 
 import com.example.mvvm_android_template.domain.model.language.Language
-import com.example.mvvm_android_template.domain.model.Product
 
-data class ProductsUiState(
+data class Products(
     val selectedLanguage: Language = Language.TR,
     val title: String = localizeTitle(selectedLanguage),
     val isLtr: Boolean = false,

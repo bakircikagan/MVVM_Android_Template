@@ -1,4 +1,4 @@
-package com.example.mvvm_android_template.presentation.products
+package com.example.mvvm_android_template.presentation.product
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,11 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.mvvm_android_template.domain.model.Product
+import com.example.mvvm_android_template.domain.Product
 
 
 @Composable
-fun ProductRow(
+fun ProductView(
     product: Product,
     onClick: () -> Unit
 ) {
