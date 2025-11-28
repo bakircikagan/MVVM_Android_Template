@@ -1,14 +1,14 @@
 package com.example.mvvm_android_template.application.coordinator
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Category
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.mvvm_android_template.application.view_model.ActiveApp
-import com.example.mvvm_android_template.application.view_model.ProductsViewModel
+import com.example.mvvm_android_template.application.view_model.CategoriesViewModel
 import com.example.mvvm_android_template.domain.language.Language
-import com.example.mvvm_android_template.presentation.ProductsScreen
+import com.example.mvvm_android_template.presentation.CategoriesScreen
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -18,20 +18,20 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ProductsRoutable @Inject constructor() : Routable {
+class CategoriesRoutable @Inject constructor() : Routable {
 
     override val routeConfig = RouteConfig(
-        path = "products",
-        activity = ActiveApp.E_COMMERCE,
+        path = "categories",
+        activity = ActiveApp.BROCHURES,
         tab = TabConfig(
-            identifier = "products",
-            icon = Icons.Filled.List,
-            index = 1,
+            identifier = "categories",
+            icon = Icons.Filled.Category,
+            index = 1,  // Second tab in BROCHURES app
             getLabel = { language ->
                 when (language) {
-                    Language.TR -> "Ürünler"
-                    Language.EN -> "Products"
-                    Language.AR -> "المنتجات"
+                    Language.TR -> "Kategoriler"
+                    Language.EN -> "Categories"
+                    Language.AR -> "الفئات"
                 }
             }
         )
@@ -39,8 +39,8 @@ class ProductsRoutable @Inject constructor() : Routable {
 
     override fun register(builder: NavGraphBuilder) {
         builder.composable(routeConfig.path) {
-            val viewModel: ProductsViewModel = hiltViewModel()
-            ProductsScreen(viewModel = viewModel)
+            val vm: CategoriesViewModel = hiltViewModel()
+            CategoriesScreen(viewModel = vm)
         }
     }
 
@@ -49,6 +49,6 @@ class ProductsRoutable @Inject constructor() : Routable {
     interface BindingModule {
         @Binds
         @IntoSet
-        fun bind(impl: ProductsRoutable): Routable
+        fun bind(impl: CategoriesRoutable): Routable
     }
 }
