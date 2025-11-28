@@ -1,5 +1,6 @@
 package com.example.mvvm_android_template.presentation
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -7,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,17 +18,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-
-import com.example.mvvm_android_template.application.view_model.products.ProductsViewModel
+import com.example.mvvm_android_template.application.view_model.ProductsViewModel
 import com.example.mvvm_android_template.domain.language.Language
 import com.example.mvvm_android_template.domain.language.localizeTitle
+import com.example.mvvm_android_template.domain.Product
 
 @Composable
 fun ProductsScreen(
     viewModel: ProductsViewModel
 ) {
-    // 🔹 bind to row view-models, not domain Product
-    val rows by viewModel.items.observeAsState(emptyList())
+    // 🔹 bind directly to domain Product list
+    val products by viewModel.products.observeAsState(emptyList())
     val title by viewModel.title.observeAsState(localizeTitle(Language.TR))
     val isLtr by viewModel.isLtr.observeAsState(false)
     val isLoading by viewModel.isLoading.observeAsState(false)
@@ -77,13 +77,18 @@ fun ProductsScreen(
                 }
 
                 else -> {
-                    LazyColumn {
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
                         items(
-                            count = rows.size,
-                            key = { index -> rows[index].id }
+                            count = products.size,
+                            key = { index -> products[index].id }
                         ) { index ->
-                            val rowVm = rows[index]
-                            ProductView(viewModel = rowVm)
+                            val product: Product = products[index]
+                            ProductView(
+                                product = product,
+                                onClick = { viewModel.onProductClicked(product.id) }
+                            )
                         }
                     }
                 }

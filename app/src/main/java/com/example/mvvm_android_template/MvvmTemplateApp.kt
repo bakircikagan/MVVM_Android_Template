@@ -1,4 +1,7 @@
 package com.example.mvvm_android_template
 
-class MvvmTemplateApp {
-}
+import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
+
+@HiltAndroidApp
+class MvvmTemplateApp : Application()

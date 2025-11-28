@@ -1,4 +1,4 @@
-package com.example.mvvm_android_template.application.view_model.products
+package com.example.mvvm_android_template.application.view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,8 +12,7 @@ import com.example.mvvm_android_template.domain.language.Language
 import com.example.mvvm_android_template.domain.language.LanguageObserver
 import com.example.mvvm_android_template.domain.language.LanguageSubject
 import com.example.mvvm_android_template.application.coordinator.NavCommand
-import com.example.mvvm_android_template.application.coordinator.NavigationManager
-import com.example.mvvm_android_template.application.view_model.ProductRowViewModel
+import com.example.mvvm_android_template.application.coordinator.Coordinator
 import com.example.mvvm_android_template.domain.language.isLtrLanguage
 import com.example.mvvm_android_template.domain.language.localizeTitle
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +22,7 @@ import javax.inject.Inject
 class ProductsViewModel @Inject constructor(
     private val repository: FakeProductRepository,
     private val languageSubject: LanguageSubject,
-    private val navigationManager: NavigationManager
+    private val coordinator: Coordinator
 ) : ViewModel(), LanguageObserver {
     private val _products = MutableLiveData<List<Product>>(emptyList())
     val products: LiveData<List<Product>> = _products
@@ -42,9 +41,6 @@ class ProductsViewModel @Inject constructor(
 
     private val _selectedLanguage = MutableLiveData<Language>(languageSubject.currentLanguage)
     val selectedLanguage: LiveData<Language> = _selectedLanguage
-
-    private val _items = MutableLiveData<List<ProductRowViewModel>>()
-    val items: LiveData<List<ProductRowViewModel>> = _items
 
     init {
         languageSubject.addObserver(this)
@@ -66,22 +62,14 @@ class ProductsViewModel @Inject constructor(
     private fun loadProducts(language: Language) {
         viewModelScope.launch {
             val list = repository.getProducts(language)
-            _items.value = list.map { p ->
-                ProductRowViewModel(
-                    id = p.id,
-                    name = p.name,
-                    category = p.category,
-                    onClick = { onProductClicked(p.id) }
-                )
-            }
+            _products.postValue(list)
         }
     }
 
     // 🔹 UI events:
-
     fun onProductClicked(productId: Int) {
         viewModelScope.launch {
-            navigationManager.navigate(NavCommand.ToProductDetails(productId))
+            coordinator.navigate(NavCommand.ToProductDetails(productId))
         }
     }
 

@@ -5,15 +5,18 @@ import kotlinx.coroutines.flow.SharedFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
-// Navigation commands your app supports
+// Navigation commands the app supports
+// TODO: URL den cevir
 sealed interface NavCommand {
+    data object ToWelcome : NavCommand
+    data object ToProducts : NavCommand
     data class ToProductDetails(val productId: Int) : NavCommand
     data object Back : NavCommand
 }
 
-// This is effectively your "Coordinator", but DI-friendly
+// DI-friendly Coordinator
 @Singleton
-class NavigationManager @Inject constructor() {
+class Coordinator @Inject constructor() {
     private val _commands = MutableSharedFlow<NavCommand>()
     val commands: SharedFlow<NavCommand> = _commands
 

@@ -1,4 +1,4 @@
-package com.example.mvvm_android_template.application.view_model.product_details
+package com.example.mvvm_android_template.application.view_model
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,7 +10,7 @@ import com.example.mvvm_android_template.domain.language.Language
 import com.example.mvvm_android_template.domain.language.LanguageObserver
 import com.example.mvvm_android_template.domain.language.LanguageSubject
 import com.example.mvvm_android_template.application.coordinator.NavCommand
-import com.example.mvvm_android_template.application.coordinator.NavigationManager
+import com.example.mvvm_android_template.application.coordinator.Coordinator
 import com.example.mvvm_android_template.domain.language.isLtrLanguage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -20,7 +20,7 @@ import javax.inject.Inject
 class ProductDetailsViewModel @Inject constructor(
     private val repository: FakeProductRepository,
     private val languageSubject: LanguageSubject,
-    private val navigationManager: NavigationManager,
+    private val coordinator: Coordinator,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), LanguageObserver {
 
@@ -85,7 +85,7 @@ class ProductDetailsViewModel @Inject constructor(
 
     fun onBack() {
         viewModelScope.launch {
-            navigationManager.navigate(NavCommand.Back)
+            coordinator.navigate(NavCommand.Back)
         }
     }
 

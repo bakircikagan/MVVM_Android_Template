@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mvvm_android_template.application.view_model.product_details.ProductDetailsViewModel
+import com.example.mvvm_android_template.application.view_model.ProductDetailsViewModel
 
 import com.example.mvvm_android_template.domain.language.Language
 
@@ -50,22 +50,22 @@ fun ProductDetailsScreen(
                 onLanguageSelected = { lang -> viewModel.onLanguageSelected(lang) }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = if (isLtr) Arrangement.Start else Arrangement.End
-            ) {
-                Text(
-                    text = "← Back",
-                    modifier = Modifier
-                        .clickable { viewModel.onBack() }
-                        .padding(vertical = 8.dp),
-                    color = Color.White,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
+//            Spacer(modifier = Modifier.height(16.dp))
+//
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//                horizontalArrangement = if (isLtr) Arrangement.Start else Arrangement.End
+//            ) {
+//                Text(
+//                    text = "← Back",
+//                    modifier = Modifier
+//                        .clickable { viewModel.onBack() }
+//                        .padding(vertical = 8.dp),
+//                    color = Color.White,
+//                    style = MaterialTheme.typography.bodyMedium,
+//                    fontWeight = FontWeight.SemiBold
+//                )
+//            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -100,7 +100,7 @@ fun ProductDetailsScreen(
 
                     Text(
                         text = category,
-                        color = Color(0xFFF60202),
+                        color = Color(0xFF04B7EE),
                         style = MaterialTheme.typography.bodyMedium
                     )
 

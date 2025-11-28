@@ -3,95 +3,118 @@ package com.example.mvvm_android_template.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
+import com.example.mvvm_android_template.application.coordinator.Coordinator
+import com.example.mvvm_android_template.application.coordinator.NavCommand
+import com.example.mvvm_android_template.application.coordinator.Routable
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-import com.example.mvvm_android_template.domain.Products
-import com.example.mvvm_android_template.domain.language.Language
-import com.example.mvvm_android_template.domain.language.LanguageSubject
-import com.example.mvvm_android_template.application.coordinator.BaseCoordinator
-import com.example.mvvm_android_template.application.coordinator.MainCoordinator
-import com.example.mvvm_android_template.application.view_model.LanguageViewModel
-import com.example.mvvm_android_template.application.view_model.product_details.ProductDetailsViewModel
-import com.example.mvvm_android_template.application.view_model.product_details.ProductDetailsViewModelFactory
-import com.example.mvvm_android_template.application.view_model.products.ProductsViewModel
-import com.example.mvvm_android_template.application.view_model.products.ProductsViewModelFactory
-import com.example.mvvm_android_template.domain.language.localizeTitle
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var routes: Set<@JvmSuppressWildcards Routable>
+
+    @Inject
+    lateinit var coordinator: Coordinator
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MainApp()
+            MainApp(
+                routes = routes,
+                coordinator = coordinator
+            )
         }
     }
 }
 
+// TO DO: Local provider dil icin ??
+// Multiple activityden vazgecmek lazim
+// in MainApp composable
 @Composable
-fun MainApp() {
+fun MainApp(
+    routes: Set<Routable>,
+    coordinator: Coordinator
+) {
     val navController = rememberNavController()
 
-    val coordinator = remember(navController) {
-        MainCoordinator(navController)
-    }
-
-    val languageViewModel: LanguageViewModel = viewModel()
-
-    MaterialTheme(colorScheme = darkColorScheme()) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = Color.Black
-        ) {
-            NavHost(
-                navController = navController,
-                startDestination = "products"
-            ) {
-                composable("products") {
-                    val productsViewModel: ProductsViewModel = viewModel(
-                        factory = ProductsViewModelFactory(
-                            languageSubject = languageViewModel,
-                            coordinator = coordinator
-                        )
-                    )
-
-                    // 🔹 Directly use screen composable
-                    ProductsScreen(viewModel = productsViewModel)
+    LaunchedEffect(Unit) {
+        coordinator.commands.collect { command ->
+            when (command) {
+                NavCommand.ToWelcome -> {
+                    navController.navigate("welcome") {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
                 }
 
-                composable(
-                    route = "productDetails/{productId}",
-                    arguments = listOf(navArgument("productId") { type = NavType.IntType })
-                ) { backStackEntry ->
+                NavCommand.ToProducts -> {
+                    navController.navigate("products") {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = false
+                        }
+                        launchSingleTop = true
+                    }
+                }
 
-                    val productId =
-                        backStackEntry.arguments?.getInt("productId") ?: return@composable
+                is NavCommand.ToProductDetails -> {
+                    navController.navigate("productDetails/${command.productId}")
+                }
 
-                    val detailsViewModel: ProductDetailsViewModel = viewModel(
-                        factory = ProductDetailsViewModelFactory(
-                            languageSubject = languageViewModel,
-                            productId = productId,
-                            coordinator = coordinator
-                        )
-                    )
+                NavCommand.Back -> {
+                    navController.popBackStack()
+                }
+            }
+        }
+    }
 
-                    // 🔹 Directly use screen composable
-                    ProductDetailsScreen(viewModel = detailsViewModel)
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = backStackEntry?.destination?.route
+
+    MaterialTheme(colorScheme = darkColorScheme()) {
+        Scaffold(
+            bottomBar = {
+                BottomTabs(
+                    navController = navController,
+                    currentRoute = currentRoute
+                )
+            }
+        ) { innerPadding ->
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                NavHost(
+                    navController = navController,
+                    startDestination = "welcome"
+                ) {
+                    routes.forEach { it.register(this) }
                 }
             }
         }
     }
 }
+
+
+
+
+
+
+

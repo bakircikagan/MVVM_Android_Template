@@ -1,4 +1,6 @@
 package com.example.mvvm_android_template.domain
 
-class WelcomeTexts {
-}
+data class WelcomeTexts(
+    val title: String,
+    val subtitle: String
+)
