@@ -12,54 +12,59 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mvvm_android_template.application.view_model.ActiveApp
+import com.example.mvvm_android_template.application.view_model.AppSwitcherViewModel
+import com.example.mvvm_android_template.domain.language.Language
 
+/**
+ * Dynamic app switcher that automatically discovers and displays all available apps.
+ * No need to manually add apps - they're discovered from routes.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppSwitcherTopBar(
     activeApp: ActiveApp,
-    onAppSelected: (ActiveApp) -> Unit
+    onAppSelected: (ActiveApp) -> Unit,
+    viewModel: AppSwitcherViewModel = hiltViewModel()
 ) {
     var expanded by remember { mutableStateOf(false) }
 
+    val availableApps by viewModel.availableApps.observeAsState(emptyList())
+    val language by viewModel.language.observeAsState(Language.TR)
+
     CenterAlignedTopAppBar(
         title = {
-            Text(
-                text = when (activeApp) {
-                    ActiveApp.E_COMMERCE -> "E-Commerce"
-                    ActiveApp.BROCHURES -> "Brochures"
-                }
-            )
+            Text(text = activeApp.getLabel(language))
         },
         actions = {
-            IconButton(onClick = { expanded = true }) {
-                Icon(
-                    imageVector = Icons.Filled.Apps,
-                    contentDescription = "Switch app"
-                )
-            }
+            // Only show switcher if there are multiple apps
+            if (availableApps.size > 1) {
+                IconButton(onClick = { expanded = true }) {
+                    Icon(
+                        imageVector = Icons.Filled.Apps,
+                        contentDescription = "Switch app"
+                    )
+                }
 
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                DropdownMenuItem(
-                    text = { Text("E-Commerce") },
-                    onClick = {
-                        expanded = false
-                        onAppSelected(ActiveApp.E_COMMERCE)
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    availableApps.forEach { app ->
+                        DropdownMenuItem(
+                            text = { Text(app.getLabel(language)) },
+                            onClick = {
+                                expanded = false
+                                onAppSelected(app)
+                            }
+                        )
                     }
-                )
-                DropdownMenuItem(
-                    text = { Text("Brochures") },
-                    onClick = {
-                        expanded = false
-                        onAppSelected(ActiveApp.BROCHURES)
-                    }
-                )
+                }
             }
         },
         colors = TopAppBarDefaults.topAppBarColors()

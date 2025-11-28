@@ -65,10 +65,11 @@ fun MainApp(
 
     // 🔹 App switcher VM
     val appSwitcherViewModel: AppSwitcherViewModel = hiltViewModel()
-    val activeApp by appSwitcherViewModel.activeApp.observeAsState(ActiveApp.E_COMMERCE)
+    val activeApp by appSwitcherViewModel.activeApp.observeAsState()
 
-    // Get start destination from RouteDiscovery
-    val initialStartDestination = routeDiscovery.getStartDestination(ActiveApp.E_COMMERCE) ?: "welcome"
+    // Get start destination from RouteDiscovery for the first discovered app
+    val firstApp = routeDiscovery.getActivities().firstOrNull()
+    val initialStartDestination = firstApp?.let { routeDiscovery.getStartDestination(it) } ?: "welcome"
 
     // 🔹 Listen to Coordinator commands (your existing logic + brochures if you added)
     LaunchedEffect(Unit) {
@@ -129,11 +130,14 @@ fun MainApp(
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
 
+    // Don't render until we have an active app
+    val currentActiveApp = activeApp ?: return
+
     MaterialTheme(colorScheme = darkColorScheme()) {
         Scaffold(
             topBar = {
                 AppSwitcherTopBar(
-                    activeApp = activeApp,
+                    activeApp = currentActiveApp,
                     onAppSelected = { app ->
                         appSwitcherViewModel.switchApp(app)
 
@@ -155,7 +159,7 @@ fun MainApp(
                 UniversalBottomBar(
                     navController = navController,
                     currentRoute = currentRoute,
-                    activity = activeApp
+                    activity = currentActiveApp
                 )
             }
         ) { innerPadding ->
