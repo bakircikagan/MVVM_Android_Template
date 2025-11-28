@@ -27,4 +27,11 @@ abstract class RoutesModule {
     abstract fun bindWelcomeRoutable(
         impl: WelcomeRoutable
     ): Routable
+
+    @Binds
+    @IntoSet
+    abstract fun bindBrochuresRoutable(
+        impl: BrochuresRoutable
+    ): Routable
+
 }

@@ -11,6 +11,10 @@ sealed interface NavCommand {
     data object ToWelcome : NavCommand
     data object ToProducts : NavCommand
     data class ToProductDetails(val productId: Int) : NavCommand
+
+    object ToBrochures : NavCommand
+    data class ToBrochureDetails(val brochureId: Int) : NavCommand
+
     data object Back : NavCommand
 }
 

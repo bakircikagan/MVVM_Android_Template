@@ -58,8 +58,13 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     implementation("com.google.dagger:hilt-android:2.52")
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.compose.material3)
     kapt("com.google.dagger:hilt-android-compiler:2.52")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation("androidx.compose.material:material-icons-core:1.6.0")
+    implementation("androidx.compose.material:material-icons-extended:1.6.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
