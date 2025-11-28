@@ -11,17 +11,20 @@ import com.example.mvvm_android_template.domain.Product
 import com.example.mvvm_android_template.domain.language.Language
 import com.example.mvvm_android_template.domain.language.LanguageObserver
 import com.example.mvvm_android_template.domain.language.LanguageSubject
-import com.example.mvvm_android_template.application.coordinator.BaseCoordinator
+import com.example.mvvm_android_template.application.coordinator.NavCommand
+import com.example.mvvm_android_template.application.coordinator.NavigationManager
 import com.example.mvvm_android_template.application.view_model.ProductRowViewModel
 import com.example.mvvm_android_template.domain.language.isLtrLanguage
 import com.example.mvvm_android_template.domain.language.localizeTitle
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class ProductsViewModel(
+@HiltViewModel
+class ProductsViewModel @Inject constructor(
     private val repository: FakeProductRepository,
     private val languageSubject: LanguageSubject,
-    private val coordinator: BaseCoordinator
+    private val navigationManager: NavigationManager
 ) : ViewModel(), LanguageObserver {
-
     private val _products = MutableLiveData<List<Product>>(emptyList())
     val products: LiveData<List<Product>> = _products
 
@@ -77,7 +80,9 @@ class ProductsViewModel(
     // 🔹 UI events:
 
     fun onProductClicked(productId: Int) {
-        coordinator.navigateTo(productId)
+        viewModelScope.launch {
+            navigationManager.navigate(NavCommand.ToProductDetails(productId))
+        }
     }
 
     fun onLanguageSelected(language: Language) {

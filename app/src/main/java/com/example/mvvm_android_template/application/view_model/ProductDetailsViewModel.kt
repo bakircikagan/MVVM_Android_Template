@@ -2,24 +2,32 @@ package com.example.mvvm_android_template.application.view_model.product_details
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mvvm_android_template.infrastructure.FakeProductRepository
 import com.example.mvvm_android_template.domain.language.Language
 import com.example.mvvm_android_template.domain.language.LanguageObserver
 import com.example.mvvm_android_template.domain.language.LanguageSubject
-import com.example.mvvm_android_template.application.coordinator.BaseCoordinator
+import com.example.mvvm_android_template.application.coordinator.NavCommand
+import com.example.mvvm_android_template.application.coordinator.NavigationManager
 import com.example.mvvm_android_template.domain.language.isLtrLanguage
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ProductDetailsViewModel(
+@HiltViewModel
+class ProductDetailsViewModel @Inject constructor(
     private val repository: FakeProductRepository,
     private val languageSubject: LanguageSubject,
-    private val productId: Int,
-    private val coordinator: BaseCoordinator
+    private val navigationManager: NavigationManager,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel(), LanguageObserver {
 
-    // View-facing state: primitives only
+    private val productId: Int = savedStateHandle["productId"]
+        ?: error("productId is required")
+
+
     private val _name = MutableLiveData<String>()
     val name: LiveData<String> = _name
 
@@ -76,7 +84,9 @@ class ProductDetailsViewModel(
     }
 
     fun onBack() {
-        coordinator.navigateBack()
+        viewModelScope.launch {
+            navigationManager.navigate(NavCommand.Back)
+        }
     }
 
     fun onLanguageSelected(language: Language) {
