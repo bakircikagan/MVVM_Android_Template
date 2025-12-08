@@ -1,4 +1,4 @@
-package com.example.mvvm_android_template.presentation
+package com.example.mvvm_android_template.presentation.view
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Apps

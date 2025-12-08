@@ -5,10 +5,9 @@ import androidx.compose.material.icons.filled.Category
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.example.mvvm_android_template.application.view_model.ActiveApp
 import com.example.mvvm_android_template.application.view_model.CategoriesViewModel
 import com.example.mvvm_android_template.domain.language.Language
-import com.example.mvvm_android_template.presentation.CategoriesScreen
+import com.example.mvvm_android_template.presentation.screen.CategoriesScreen
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -21,8 +20,8 @@ import javax.inject.Singleton
 class CategoriesRoutable @Inject constructor() : Routable {
 
     override val routeConfig = RouteConfig(
-        path = "categories",
-        activity = ActiveApp.BROCHURES,
+        route = Route.Categories,
+        app = ActiveApp.BROCHURES,
         tab = TabConfig(
             identifier = "categories",
             icon = Icons.Filled.Category,
@@ -38,7 +37,7 @@ class CategoriesRoutable @Inject constructor() : Routable {
     )
 
     override fun register(builder: NavGraphBuilder) {
-        builder.composable(routeConfig.path) {
+        builder.composable(routeConfig.route.path) {
             val vm: CategoriesViewModel = hiltViewModel()
             CategoriesScreen(viewModel = vm)
         }

@@ -1,14 +1,10 @@
-package com.example.mvvm_android_template.presentation
+package com.example.mvvm_android_template.presentation.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import com.example.mvvm_android_template.application.view_model.ProductDetailsViewModel
 
 import com.example.mvvm_android_template.domain.language.Language
+import com.example.mvvm_android_template.presentation.view.LanguageSwitcher
 
 @Composable
 fun ProductDetailsScreen(
@@ -44,7 +41,7 @@ fun ProductDetailsScreen(
                 .background(Color.Black)
                 .padding(16.dp)
         ) {
-            LanguageView(
+            LanguageSwitcher(
                 selected = selectedLanguage,
                 isLtr = isLtr,
                 onLanguageSelected = { lang -> viewModel.onLanguageSelected(lang) }

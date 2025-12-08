@@ -1,46 +1,36 @@
-package com.example.mvvm_android_template.presentation
+// presentation/BottomTabs.kt
+package com.example.mvvm_android_template.presentation.view
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.mvvm_android_template.application.view_model.ActiveApp
-import com.example.mvvm_android_template.application.view_model.UniversalTabsViewModel
+import com.example.mvvm_android_template.application.view_model.BottomTabsViewModel
 import com.example.mvvm_android_template.domain.BottomTabItem
 
-/**
- * Universal bottom navigation bar that automatically displays tabs
- * for the current activity. No manual tab management needed.
- */
 @Composable
-fun UniversalBottomBar(
+fun BottomTabs(
     navController: NavController,
-    currentRoute: String?,
-    activity: ActiveApp,
-    viewModel: UniversalTabsViewModel = hiltViewModel()
+    currentRoute: String?
 ) {
-    // Update the activity when it changes
-    LaunchedEffect(activity) {
-        viewModel.setActivity(activity)
-    }
-
+    val viewModel: BottomTabsViewModel = hiltViewModel()
     val items: List<BottomTabItem> by viewModel.items.observeAsState(emptyList())
 
-    // Don't show bottom bar if there are no tabs
-    if (items.isEmpty()) return
-
-    val isOnDetails = currentRoute?.contains("Details") == true
+    val isOnDetails = currentRoute?.startsWith("productDetails") == true
 
     NavigationBar {
         items.forEach { tab ->
             val selected = if (isOnDetails) {
-                // On detail screens: no tab selected
+                // 🔹 On product details: no tab selected
                 false
             } else {
-                currentRoute?.startsWith(tab.route) == true
+                when (tab.route) {
+                    "welcome" -> currentRoute?.startsWith("welcome") == true
+                    "products" -> currentRoute?.startsWith("products") == true
+                    else -> false
+                }
             }
 
             NavigationBarItem(

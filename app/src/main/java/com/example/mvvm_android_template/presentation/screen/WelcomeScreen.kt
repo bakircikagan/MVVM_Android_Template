@@ -1,4 +1,4 @@
-package com.example.mvvm_android_template.presentation
+package com.example.mvvm_android_template.presentation.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.example.mvvm_android_template.application.view_model.WelcomeViewModel
 import com.example.mvvm_android_template.domain.WelcomeTexts
 import com.example.mvvm_android_template.domain.language.Language
+import com.example.mvvm_android_template.presentation.view.LanguageSwitcher
 
 @Composable
 fun WelcomeScreen(
@@ -37,7 +38,7 @@ fun WelcomeScreen(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                LanguageView(
+                LanguageSwitcher(
                     selected = selectedLanguage,
                     isLtr = isLtr,
                     onLanguageSelected = { lang -> viewModel.onLanguageSelected(lang) }

@@ -1,4 +1,4 @@
-package com.example.mvvm_android_template.presentation
+package com.example.mvvm_android_template.presentation.view
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Apps
@@ -17,7 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.mvvm_android_template.application.view_model.ActiveApp
+import com.example.mvvm_android_template.application.coordinator.ActiveApp
 import com.example.mvvm_android_template.application.view_model.AppSwitcherViewModel
 import com.example.mvvm_android_template.domain.language.Language
 

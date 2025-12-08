@@ -5,9 +5,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.mvvm_android_template.application.view_model.ActiveApp
 import com.example.mvvm_android_template.application.view_model.ProductDetailsViewModel
-import com.example.mvvm_android_template.presentation.ProductDetailsScreen
+import com.example.mvvm_android_template.presentation.screen.ProductDetailsScreen
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -20,14 +19,14 @@ import javax.inject.Singleton
 class ProductDetailsRoutable @Inject constructor() : Routable {
 
     override val routeConfig = RouteConfig(
-        path = "productDetails/{productId}",
-        activity = ActiveApp.E_COMMERCE,
+        route = Route.ProductDetails,
+        app = ActiveApp.E_COMMERCE,
         tab = null // Detail screen - no tab
     )
 
     override fun register(builder: NavGraphBuilder) {
         builder.composable(
-            route = routeConfig.path,
+            route = routeConfig.route.path,
             arguments = listOf(navArgument("productId") { type = NavType.IntType })
         ) {
             val viewModel: ProductDetailsViewModel = hiltViewModel()

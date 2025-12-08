@@ -4,7 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mvvm_android_template.application.coordinator.ActiveApp
 import com.example.mvvm_android_template.application.coordinator.Coordinator
+import com.example.mvvm_android_template.application.coordinator.Route
 import com.example.mvvm_android_template.application.coordinator.RouteDiscovery
 import com.example.mvvm_android_template.domain.BottomTabItem
 import com.example.mvvm_android_template.domain.language.Language
@@ -52,15 +54,30 @@ class UniversalTabsViewModel @Inject constructor(
         rebuildItems(activity, languageSubject.currentLanguage)
     }
 
-    private fun rebuildItems(activity: ActiveApp, language: Language) {
-        val tabs = routeDiscovery.getTabsForActivity(activity, language)
+    private fun rebuildItems(app: ActiveApp, language: Language) {
+        val tabs = routeDiscovery.getTabsForApp(app, language)
         _items.value = if (isLtrLanguage(language)) tabs else tabs.reversed()
     }
-
     fun onTabSelected(route: String) {
         viewModelScope.launch {
-            routeDiscovery.getNavCommandForRoute(route)?.let {
-                coordinator.navigate(it)
+            when {
+                route.startsWith(Route.Welcome.path) -> {
+                    coordinator.navigate(Route.Welcome, clearStack = true)
+                }
+
+                route.startsWith(Route.Products.path) -> {
+                    coordinator.navigate(Route.Products, clearStack = true)
+                }
+
+                route.startsWith(Route.Brochures.path) -> {
+                    coordinator.navigate(Route.Brochures, clearStack = true)
+                }
+
+                route.startsWith(Route.Categories.path) -> {
+                    coordinator.navigate(Route.Categories, clearStack = true)
+                }
+
+                // add any other top-level tab routes here
             }
         }
     }

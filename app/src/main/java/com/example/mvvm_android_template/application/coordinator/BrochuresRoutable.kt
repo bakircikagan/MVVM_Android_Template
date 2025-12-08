@@ -5,10 +5,9 @@ import androidx.compose.material.icons.filled.Apps
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.example.mvvm_android_template.application.view_model.ActiveApp
 import com.example.mvvm_android_template.application.view_model.BrochuresViewModel
 import com.example.mvvm_android_template.domain.language.Language
-import com.example.mvvm_android_template.presentation.BrochuresScreen
+import com.example.mvvm_android_template.presentation.screen.BrochuresScreen
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -21,8 +20,8 @@ import javax.inject.Singleton
 class BrochuresRoutable @Inject constructor() : Routable {
 
     override val routeConfig = RouteConfig(
-        path = "brochures",
-        activity = ActiveApp.BROCHURES,
+        route = Route.Brochures,
+        app = ActiveApp.BROCHURES,
         tab = TabConfig(
             identifier = "brochures",
             icon = Icons.Filled.Apps,
@@ -38,7 +37,7 @@ class BrochuresRoutable @Inject constructor() : Routable {
     )
 
     override fun register(builder: NavGraphBuilder) {
-        builder.composable(routeConfig.path) {
+        builder.composable(routeConfig.route.path) {
             val vm: BrochuresViewModel = hiltViewModel()
             BrochuresScreen(vm)
         }

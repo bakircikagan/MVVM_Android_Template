@@ -15,16 +15,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.mvvm_android_template.application.coordinator.ActiveApp
 import com.example.mvvm_android_template.application.coordinator.Coordinator
-import com.example.mvvm_android_template.application.coordinator.NavCommand
 import com.example.mvvm_android_template.application.coordinator.Routable
+import com.example.mvvm_android_template.application.coordinator.Route
 import com.example.mvvm_android_template.application.coordinator.RouteDiscovery
-import com.example.mvvm_android_template.application.view_model.ActiveApp
 import com.example.mvvm_android_template.application.view_model.AppSwitcherViewModel
+import com.example.mvvm_android_template.presentation.view.AppSwitcherTopBar
+import com.example.mvvm_android_template.presentation.view.UniversalBottomBar
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -43,18 +44,21 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MainApp(
+//            MainApp(
+//                routes = routes,
+//                coordinator = coordinator,
+//                routeDiscovery = routeDiscovery
+//            )
+            RootApp(
                 routes = routes,
                 coordinator = coordinator,
                 routeDiscovery = routeDiscovery
             )
+
         }
     }
 }
 
-// TO DO: Local provider dil icin ??
-// Multiple activityden vazgecmek lazim
-// in MainApp composable
 @Composable
 fun MainApp(
     routes: Set<Routable>,
@@ -63,75 +67,27 @@ fun MainApp(
 ) {
     val navController = rememberNavController()
 
-    // 🔹 App switcher VM
+    // App switcher VM
     val appSwitcherViewModel: AppSwitcherViewModel = hiltViewModel()
     val activeApp by appSwitcherViewModel.activeApp.observeAsState()
 
-    // Get start destination from RouteDiscovery for the first discovered app
-    val firstApp = routeDiscovery.getActivities().firstOrNull()
-    val initialStartDestination = firstApp?.let { routeDiscovery.getStartDestination(it) } ?: "welcome"
+    // Step 1: choose a default app explicitly
+    val defaultApp = ActiveApp.E_COMMERCE
 
-    // 🔹 Listen to Coordinator commands (your existing logic + brochures if you added)
+    // Step 2: compute start destination for default app
+    val initialStartDestination: Route =
+        routeDiscovery.getStartDestination(defaultApp) ?: Route.Products
+
     LaunchedEffect(Unit) {
-        coordinator.commands.collect { command ->
-            when (command) {
-                NavCommand.ToWelcome -> {
-                    navController.navigate("welcome") {
-                        popUpTo(navController.graph.startDestinationId) {
-                            inclusive = true
-                        }
-                        launchSingleTop = true
-                    }
-                }
-
-                NavCommand.ToProducts -> {
-                    navController.navigate("products") {
-                        popUpTo(navController.graph.startDestinationId) {
-                            inclusive = false
-                        }
-                        launchSingleTop = true
-                    }
-                }
-
-                is NavCommand.ToProductDetails -> {
-                    navController.navigate("productDetails/${command.productId}")
-                }
-
-                // If you defined these:
-                NavCommand.ToBrochures -> {
-                    navController.navigate("brochures") {
-                        popUpTo(navController.graph.startDestinationId) {
-                            inclusive = true
-                        }
-                        launchSingleTop = true
-                    }
-                }
-
-                NavCommand.ToCategories -> {
-                    navController.navigate("categories") {
-                        popUpTo(navController.graph.startDestinationId) {
-                            inclusive = false
-                        }
-                        launchSingleTop = true
-                    }
-                }
-
-                is NavCommand.ToBrochureDetails -> {
-                    navController.navigate("brochureDetails/${command.brochureId}")
-                }
-
-                NavCommand.Back -> {
-                    navController.popBackStack()
-                }
-            }
-        }
+        coordinator.attachNavController(navController)
+        coordinator.start()
     }
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
 
-    // Don't render until we have an active app
-    val currentActiveApp = activeApp ?: return
+    // If VM hasn’t emitted yet, use default app
+    val currentActiveApp = activeApp ?: defaultApp
 
     MaterialTheme(colorScheme = darkColorScheme()) {
         Scaffold(
@@ -141,13 +97,12 @@ fun MainApp(
                     onAppSelected = { app ->
                         appSwitcherViewModel.switchApp(app)
 
-                        // 🔹 Automatically navigate to the app's start destination
+                        // Step 3: when user switches app, navigate to that app's start route
                         val startDestination = routeDiscovery.getStartDestination(app)
                         if (startDestination != null) {
-                            navController.navigate(startDestination) {
-                                popUpTo(navController.graph.startDestinationId) {
-                                    inclusive = true
-                                }
+                            navController.navigate(startDestination.path) {
+                                // clear the whole stack when changing apps
+                                popUpTo(0) { inclusive = true }
                                 launchSingleTop = true
                             }
                         }
@@ -155,11 +110,10 @@ fun MainApp(
                 )
             },
             bottomBar = {
-                // Universal bottom bar - automatically displays tabs for current activity
                 UniversalBottomBar(
                     navController = navController,
                     currentRoute = currentRoute,
-                    activity = currentActiveApp
+                    app = currentActiveApp // still named activity in your API
                 )
             }
         ) { innerPadding ->
@@ -170,7 +124,7 @@ fun MainApp(
             ) {
                 NavHost(
                     navController = navController,
-                    startDestination = initialStartDestination
+                    startDestination = initialStartDestination.path
                 ) {
                     routes.forEach { it.register(this) }
                 }
@@ -178,4 +132,5 @@ fun MainApp(
         }
     }
 }
+
 

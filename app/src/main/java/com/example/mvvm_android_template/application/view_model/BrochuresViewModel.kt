@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mvvm_android_template.application.coordinator.Coordinator
 import com.example.mvvm_android_template.application.coordinator.NavCommand
+import com.example.mvvm_android_template.application.coordinator.Route
 import com.example.mvvm_android_template.domain.Brochure
 import com.example.mvvm_android_template.domain.language.Language
 import com.example.mvvm_android_template.domain.language.LanguageObserver
@@ -42,7 +43,7 @@ class BrochuresViewModel @Inject constructor(
 
     fun onBrochureSelected(id: Int) {
         viewModelScope.launch {
-            coordinator.navigate(NavCommand.ToBrochureDetails(id))
+            coordinator.navigate(Route.BrochureDetailsNav(id))
         }
     }
 }

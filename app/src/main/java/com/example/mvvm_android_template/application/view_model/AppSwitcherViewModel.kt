@@ -3,6 +3,7 @@ package com.example.mvvm_android_template.application.view_model
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.mvvm_android_template.application.coordinator.ActiveApp
 import com.example.mvvm_android_template.application.coordinator.RouteDiscovery
 import com.example.mvvm_android_template.domain.language.Language
 import com.example.mvvm_android_template.domain.language.LanguageObserver
@@ -16,7 +17,7 @@ class AppSwitcherViewModel @Inject constructor(
     private val languageSubject: LanguageSubject
 ) : ViewModel(), LanguageObserver {
 
-    private val _activeApp = MutableLiveData<ActiveApp>()
+    private val _activeApp = MutableLiveData<ActiveApp>(ActiveApp.E_COMMERCE)
     val activeApp: LiveData<ActiveApp> get() = _activeApp
 
     private val _availableApps = MutableLiveData<List<ActiveApp>>()
@@ -41,7 +42,7 @@ class AppSwitcherViewModel @Inject constructor(
 
     private fun loadAvailableApps() {
         // Automatically discover all apps from routes
-        val apps = routeDiscovery.getActivities()
+        val apps = routeDiscovery.getApps()
         _availableApps.value = apps
 
         // Set initial active app to first discovered app
@@ -52,28 +53,5 @@ class AppSwitcherViewModel @Inject constructor(
 
     fun switchApp(app: ActiveApp) {
         _activeApp.value = app
-    }
-}
-
-enum class ActiveApp {
-    E_COMMERCE,
-    BROCHURES;
-
-    /**
-     * Get localized label for this app
-     */
-    fun getLabel(language: Language): String {
-        return when (this) {
-            E_COMMERCE -> when (language) {
-                Language.TR -> "E-Ticaret"
-                Language.EN -> "E-Commerce"
-                Language.AR -> "التجارة الإلكترونية"
-            }
-            BROCHURES -> when (language) {
-                Language.TR -> "Broşürler"
-                Language.EN -> "Brochures"
-                Language.AR -> "كتيبات"
-            }
-        }
     }
 }

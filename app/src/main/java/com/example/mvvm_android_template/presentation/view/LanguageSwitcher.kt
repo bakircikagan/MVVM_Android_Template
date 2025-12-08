@@ -1,4 +1,4 @@
-package com.example.mvvm_android_template.presentation
+package com.example.mvvm_android_template.presentation.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.example.mvvm_android_template.domain.language.Language
 
 @Composable
-fun LanguageView(
+fun LanguageSwitcher(
     selected: Language,
     isLtr: Boolean,
     onLanguageSelected: (Language) -> Unit

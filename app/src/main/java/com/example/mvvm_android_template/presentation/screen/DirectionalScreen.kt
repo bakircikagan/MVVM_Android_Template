@@ -1,4 +1,4 @@
-package com.example.mvvm_android_template.presentation
+package com.example.mvvm_android_template.presentation.screen
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider

@@ -17,6 +17,7 @@ import javax.inject.Inject
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
+import com.example.mvvm_android_template.application.coordinator.Route
 
 @HiltViewModel
 class BottomTabsViewModel @Inject constructor(
@@ -73,8 +74,8 @@ class BottomTabsViewModel @Inject constructor(
     fun onTabSelected(route: String) {
         viewModelScope.launch {
             when {
-                route.startsWith("welcome") -> coordinator.navigate(NavCommand.ToWelcome)
-                route.startsWith("products") -> coordinator.navigate(NavCommand.ToProducts)
+                route.startsWith("welcome") -> coordinator.navigate(Route.Welcome)
+                route.startsWith("products") -> coordinator.navigate(Route.Products)
             }
         }
     }

@@ -13,6 +13,7 @@ import com.example.mvvm_android_template.domain.language.LanguageObserver
 import com.example.mvvm_android_template.domain.language.LanguageSubject
 import com.example.mvvm_android_template.application.coordinator.NavCommand
 import com.example.mvvm_android_template.application.coordinator.Coordinator
+import com.example.mvvm_android_template.application.coordinator.Route
 import com.example.mvvm_android_template.domain.language.isLtrLanguage
 import com.example.mvvm_android_template.domain.language.localizeTitle
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -69,7 +70,7 @@ class ProductsViewModel @Inject constructor(
     // 🔹 UI events:
     fun onProductClicked(productId: Int) {
         viewModelScope.launch {
-            coordinator.navigate(NavCommand.ToProductDetails(productId))
+            coordinator.navigate(Route.ProductDetailsNav(productId))
         }
     }
 

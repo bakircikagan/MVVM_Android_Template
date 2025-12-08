@@ -1,4 +1,4 @@
-package com.example.mvvm_android_template.presentation
+package com.example.mvvm_android_template.presentation.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,6 +22,8 @@ import com.example.mvvm_android_template.application.view_model.ProductsViewMode
 import com.example.mvvm_android_template.domain.language.Language
 import com.example.mvvm_android_template.domain.language.localizeTitle
 import com.example.mvvm_android_template.domain.Product
+import com.example.mvvm_android_template.presentation.view.LanguageSwitcher
+import com.example.mvvm_android_template.presentation.view.ProductCard
 
 @Composable
 fun ProductsScreen(
@@ -41,7 +43,7 @@ fun ProductsScreen(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            LanguageView(
+            LanguageSwitcher(
                 selected = selectedLanguage,
                 isLtr = isLtr,
                 onLanguageSelected = { language ->
@@ -85,7 +87,7 @@ fun ProductsScreen(
                             key = { index -> products[index].id }
                         ) { index ->
                             val product: Product = products[index]
-                            ProductView(
+                            ProductCard(
                                 product = product,
                                 onClick = { viewModel.onProductClicked(product.id) }
                             )
