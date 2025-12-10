@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import com.example.mvvm_android_template.application.event.BrochuresEvent
 import com.example.mvvm_android_template.application.view_model.BrochuresViewModel
 import com.example.mvvm_android_template.domain.language.Language
 import com.example.mvvm_android_template.domain.language.isLtrLanguage
@@ -21,7 +22,8 @@ fun BrochuresScreen(vm: BrochuresViewModel) {
                 BrochureCard(
                     brochure = brochure,
                     language = language,
-                    onClick = { vm.onBrochureSelected(brochure.id) }
+                    // onClick = { vm.onBrochureSelected(brochure.id) }
+                    onClick = { vm.onEvent(BrochuresEvent.BrochureClicked(brochure.id))}
                 )
             }
         }

@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.mvvm_android_template.application.coordinator.Coordinator
 import com.example.mvvm_android_template.application.coordinator.NavCommand
 import com.example.mvvm_android_template.application.coordinator.Route
+import com.example.mvvm_android_template.application.event.BrochuresEvent
+import com.example.mvvm_android_template.application.event.EventHandler
 import com.example.mvvm_android_template.domain.Brochure
 import com.example.mvvm_android_template.domain.language.Language
 import com.example.mvvm_android_template.domain.language.LanguageObserver
@@ -20,7 +22,7 @@ import javax.inject.Inject
 class BrochuresViewModel @Inject constructor(
     private val languageSubject: LanguageSubject,
     private val coordinator: Coordinator
-) : ViewModel(), LanguageObserver {
+) : ViewModel(), LanguageObserver, EventHandler<BrochuresEvent> {
 
     // 🚫 not injected, just created locally
     private val repo = FakeBrochureRepository()
@@ -44,6 +46,12 @@ class BrochuresViewModel @Inject constructor(
     fun onBrochureSelected(id: Int) {
         viewModelScope.launch {
             coordinator.navigate(Route.BrochureDetailsNav(id))
+        }
+    }
+
+    override fun onEvent(event: BrochuresEvent) {
+        when(event){
+            is BrochuresEvent.BrochureClicked -> onBrochureSelected(event.id)
         }
     }
 }

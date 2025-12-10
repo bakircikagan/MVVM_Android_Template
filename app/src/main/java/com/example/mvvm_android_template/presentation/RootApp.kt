@@ -50,7 +50,6 @@ fun RootApp(
             bottomBar = {
                 // ✅ Use your existing UniversalBottomBar
                 UniversalBottomBar(
-                    navController = navController,
                     currentRoute = currentRoute,
                     app = activeApp
                 )

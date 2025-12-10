@@ -111,9 +111,8 @@ fun MainApp(
             },
             bottomBar = {
                 UniversalBottomBar(
-                    navController = navController,
                     currentRoute = currentRoute,
-                    app = currentActiveApp // still named activity in your API
+                    app = currentActiveApp
                 )
             }
         ) { innerPadding ->

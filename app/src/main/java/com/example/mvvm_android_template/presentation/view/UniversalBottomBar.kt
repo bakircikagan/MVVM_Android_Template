@@ -8,23 +8,23 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.mvvm_android_template.application.coordinator.ActiveApp
+import com.example.mvvm_android_template.application.event.UniversalBottomBarEvent
 import com.example.mvvm_android_template.application.view_model.UniversalTabsViewModel
 import com.example.mvvm_android_template.domain.BottomTabItem
 
 /**
  * Universal bottom navigation bar that automatically displays tabs
- * for the current activity. No manual tab management needed.
+ * for the current app. No manual tab management needed.
  */
 @Composable
 fun UniversalBottomBar(
-    navController: NavController,
     currentRoute: String?,
     app: ActiveApp,
     viewModel: UniversalTabsViewModel = hiltViewModel()
 ) {
-    // Update the activity when it changes
+    // Update the app when it changes
     LaunchedEffect(app) {
-        viewModel.setActivity(app)
+        viewModel.onEvent(UniversalBottomBarEvent.AppChanged(app))
     }
 
     val items: List<BottomTabItem> by viewModel.items.observeAsState(emptyList())
@@ -45,7 +45,8 @@ fun UniversalBottomBar(
 
             NavigationBarItem(
                 selected = selected,
-                onClick = { viewModel.onTabSelected(tab.route) },
+                // onClick = { viewModel.onTabSelected(tab.route) },
+                onClick = { viewModel.onEvent(UniversalBottomBarEvent.TabSelected(tab.route)) },
                 icon = {
                     Icon(
                         imageVector = tab.icon,

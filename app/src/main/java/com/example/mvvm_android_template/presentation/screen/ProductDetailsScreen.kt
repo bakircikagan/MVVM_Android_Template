@@ -47,23 +47,6 @@ fun ProductDetailsScreen(
                 onLanguageSelected = { lang -> viewModel.onLanguageSelected(lang) }
             )
 
-//            Spacer(modifier = Modifier.height(16.dp))
-//
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//                horizontalArrangement = if (isLtr) Arrangement.Start else Arrangement.End
-//            ) {
-//                Text(
-//                    text = "← Back",
-//                    modifier = Modifier
-//                        .clickable { viewModel.onBack() }
-//                        .padding(vertical = 8.dp),
-//                    color = Color.White,
-//                    style = MaterialTheme.typography.bodyMedium,
-//                    fontWeight = FontWeight.SemiBold
-//                )
-//            }
-
             Spacer(modifier = Modifier.height(16.dp))
 
             when {
